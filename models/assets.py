@@ -16,7 +16,7 @@ class Asset(ABC):
 
     @abstractmethod
     def get_total_value(self) -> float:
-        pass
+        raise NotImplementedError
 
     def get_dollar_value(self):
         converter = CurrencyRates()
