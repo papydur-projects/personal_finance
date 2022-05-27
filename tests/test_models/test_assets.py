@@ -23,7 +23,7 @@ class TestAsset:
 
     def test_name_type_validation(self):
         with pytest.raises(ValidationError):
-            DummyAsset(135, 987 )
+            DummyAsset(135, 987)
 
     def test_quantity_type_validation(self):
         with pytest.raises(ValidationError):
@@ -43,7 +43,7 @@ class TestCashAsset:
 class TestCryptoAsset:
 
     def test_crypto_asset_constructor(self):
-        assert CryptoAsset('name', 1000, 'btc')
+        assert CryptoAsset('bitcoin', 1000, 'btc')
 
 
 

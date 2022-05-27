@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 
 
-class AssetRecord:
+class Record:
     def __init__(self, model_type):
         self.dataframe_path = Path(f'src/data/dataframes/{model_type}_df.pkl')
         self.df = self.load_dataframe()
@@ -20,14 +20,14 @@ class AssetRecord:
         self.df.to_pickle(self.dataframe_path)
 
 
-class CryptoRecord(AssetRecord):
+class CryptoRecord(Record):
     def __init__(self):
         super().__init__(model_type='crypto')
 
 
-class StockRecord(AssetRecord):
+class StockRecord(Record):
     pass
 
 
-class CashRecord(AssetRecord):
+class CashRecord(Record):
     pass

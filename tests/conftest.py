@@ -1,5 +1,5 @@
 from models.assets import CashAsset
-from models.buckets import CashBucket
+from models.buckets import CashBucket, CryptoBucket
 import pytest
 
 
@@ -11,8 +11,13 @@ def cash_assets():
 
 
 @pytest.fixture
-def empty_cash_bucket():
+def empty_cash_bucket() -> CashBucket:
     return CashBucket()
+
+
+@pytest.fixture
+def empty_crypto_bucket() -> CryptoBucket:
+    return CryptoBucket()
 
 
 
