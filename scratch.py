@@ -1,17 +1,15 @@
-import plotly.express as px
-import webbrowser
+from pycoingecko import CoinGeckoAPI
+
+from models.assets import CashAsset
+from models.buckets import Bucket
 
 
 def main():
-    add_webbrowser()
-    fig = px.bar(y=[2, 1, 3])
+    class DummyBucket(Bucket):
+        def add_assets(self, assets):
+            self._add_assets(assets)
 
-    fig.show(renderer='firefox')
-
-
-def add_webbrowser():
-    firefox_path = "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
-    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
+    DummyBucket().add_assets(CashAsset(name='cash', quantity=1234))
 
 
 if __name__ == '__main__':

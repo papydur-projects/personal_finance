@@ -3,6 +3,8 @@ from pydantic.dataclasses import dataclass
 from pydantic import StrictStr
 from dataclasses import field
 from forex_python.converter import CurrencyRates
+from typing import List
+from pycoingecko import CoinGeckoAPI
 
 
 @dataclass
@@ -18,7 +20,7 @@ class Asset(ABC):
     def get_total_value(self) -> float:
         raise NotImplementedError
 
-    def get_dollar_value(self):
+    def get_dollar_value(self) -> float:
         converter = CurrencyRates()
         rate = converter.get_rate('EUR', 'USD')
         return rate * self.total_value
@@ -26,18 +28,14 @@ class Asset(ABC):
 
 @dataclass
 class CryptoAsset(Asset):
-    def get_total_value(self) -> float:
-        pass
+    ticker: StrictStr
 
-
-@dataclass
-class CashAsset(Asset):
     def get_total_value(self) -> float:
         return self.quantity
 
 
-if __name__ == '__main__':
-    cash = CashAsset(name=87, quantity=1230.12)
-    print(cash)
-    print(cash.total_value)
-    print(cash.return_dollar_value())
+@dataclass
+class CashAsset(Asset):
+
+    def get_total_value(self) -> float:
+        return self.quantity
