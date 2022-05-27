@@ -5,7 +5,7 @@ import datetime
 from typing import List, Set
 from collections.abc import Iterable
 
-from models.assets import CashAsset
+from models.assets import CashAsset, Asset
 
 
 class Bucket(ABC, BaseModel):
@@ -27,7 +27,7 @@ class Bucket(ABC, BaseModel):
             raise ValueError(f'not all assets were of type {asset_type}')
 
     @abstractmethod
-    def add_assets(self, assets):
+    def add_assets(self, assets: Iterable[Asset]):
         self.assets.extend(assets)
 
     def change_date(self, year, month, day):
