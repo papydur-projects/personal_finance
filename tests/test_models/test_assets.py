@@ -1,5 +1,5 @@
 import pytest
-from models.assets import CashAsset, Asset
+from models.assets import CashAsset, Asset, CryptoAsset
 from pydantic.dataclasses import dataclass
 from pydantic import ValidationError
 
@@ -21,27 +21,29 @@ class TestAsset:
     def test_asset_constructor_success(self, name, quantity):
         assert DummyAsset(name=name, quantity=quantity)
 
-    @pytest.mark.parametrize('name, quantity', [
-        ('name', 'asd'), (123, 987),
-    ])
-    def test_asset_constructor_validation(self, name, quantity):
+    def test_name_type_validation(self):
         with pytest.raises(ValidationError):
-            DummyAsset(name=name, quantity=quantity)
+            DummyAsset(135, 987 )
+
+    def test_quantity_type_validation(self):
+        with pytest.raises(ValidationError):
+            DummyAsset('name', 'a_number')
 
 
 class TestCashAsset:
 
-    @pytest.fixture(params=({'name': 'pos_cash', 'quantity': 1000},
-                            {'name': 'neg_cash', 'quantity': -98},))
-    def cash_asset(self, request):
-        yield {'asset': CashAsset(name=request.param['name'], quantity=request.param['quantity']),
-               'params': request.param}
+    def test_cash_asset_constructor(self):
+        assert CashAsset(name='name', quantity=1000)
 
-    def test_cash_asset_constructor(self, cash_asset):
-        assert cash_asset['asset']
+    def test_get_total_value(self):
+        assert CashAsset('pos_cash', 1000).get_total_value() == 1000
+        assert CashAsset('neg_cash', -89).get_total_value() == -89
 
-    def test_get_total_value(self, cash_asset):
-        assert cash_asset['asset'].get_total_value() == cash_asset['params']['quantity']
+
+class TestCryptoAsset:
+
+    def test_crypto_asset_constructor(self):
+        assert CryptoAsset('name', 1000, 'btc')
 
 
 

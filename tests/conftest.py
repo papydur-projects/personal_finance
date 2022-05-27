@@ -1,7 +1,7 @@
 from models.assets import CashAsset
-from models.buckets import Bucket
-import datetime
+from models.buckets import CashBucket
 import pytest
+
 
 @pytest.fixture
 def cash_assets():
@@ -9,9 +9,10 @@ def cash_assets():
               CashAsset(name='debt', quantity=-234)]
     return assets
 
+
 @pytest.fixture
-def buckets(cash_assets):
-    buckets = Bucket(date=datetime.date.today())
+def empty_cash_bucket():
+    return CashBucket()
 
 
 
