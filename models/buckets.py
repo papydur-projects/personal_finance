@@ -8,8 +8,9 @@ from models.assets import Asset
 
 class Bucket(BaseModel, abc.ABC):
     assets: Dict = Field(default_factory=dict)
+    type: str = 'base_asset'
 
-    def add_asset(self, asset: Asset):
+    def add_asset(self, asset: Asset) -> None:
         self.validate_asset_type(asset)
         self.assets[asset.name] = asset
 

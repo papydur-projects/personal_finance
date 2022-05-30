@@ -1,6 +1,6 @@
 import pytest
 
-from models.assets import Asset, CashAsset, CryptoAsset
+from models.assets import CashAsset, CryptoAsset, Asset
 from models.buckets import CashBucket, Bucket
 
 
@@ -10,6 +10,11 @@ class TestBucket:
 
     def test_empty_bucket(self, empty_bucket: Bucket):
         assert not empty_bucket.assets
+
+    def test_add_asset(self, empty_bucket: Bucket, asset: Asset):
+        empty_bucket.add_asset(asset)
+        assert len(empty_bucket.assets) == 1
+        assert asset.name in empty_bucket.assets.keys()
 
 
 class TestCashBucket:
@@ -21,12 +26,10 @@ class TestCashBucket:
             empty_cash_bucket.type = 'other_type'
 
     def test_asset_type_validation(self, empty_cash_bucket: CashBucket, bitcoin: CryptoAsset) -> None:
-        empty_cash_bucket.validate_asset_type(bitcoin)
+        with pytest.raises(TypeError):
+            empty_cash_bucket.validate_asset_type(bitcoin)
 
-    def test_add_asset(self, empty_cash_bucket: CashBucket, cash: CashAsset):
-        empty_cash_bucket.add_asset(cash)
-        assert len(empty_cash_bucket.assets) == 1
-        assert cash.name in empty_cash_bucket.assets.keys()
+
 
 
 
