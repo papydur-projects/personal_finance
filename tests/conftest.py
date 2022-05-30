@@ -1,13 +1,17 @@
-from models.assets import CashAsset
-from models.buckets import CashBucket, CryptoBucket
 import pytest
+
+from models.assets import CashAsset, CryptoAsset
+from models.buckets import Bucket, CashBucket
+
+
+class DummyBucket(Bucket):
+    def get_total_value(self) -> None:
+        return None
 
 
 @pytest.fixture
-def cash_assets():
-    assets = [CashAsset(name='cash', quantity=1234),
-              CashAsset(name='debt', quantity=-234)]
-    return assets
+def empty_bucket() -> DummyBucket:
+    return DummyBucket()
 
 
 @pytest.fixture
@@ -16,10 +20,10 @@ def empty_cash_bucket() -> CashBucket:
 
 
 @pytest.fixture
-def empty_crypto_bucket() -> CryptoBucket:
-    return CryptoBucket()
+def cash() -> CashAsset:
+    return CashAsset(name='cash', quantity=1000)
 
 
-
-
-
+@pytest.fixture
+def bitcoin() -> CryptoAsset:
+    return CryptoAsset(name='bitcoin', quantity=2, ticker='btc')

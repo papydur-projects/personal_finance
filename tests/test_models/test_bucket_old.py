@@ -1,5 +1,5 @@
 import pytest
-from models.assets import CashAsset, CryptoAsset
+from models.assets_old import CashAsset, CryptoAsset
 
 
 class TestCashBucket:

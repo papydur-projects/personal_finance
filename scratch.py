@@ -1,7 +1,7 @@
 from pycoingecko import CoinGeckoAPI
 
-from models.assets import CashAsset
-from models.buckets import Bucket
+from models.assets_old import CashAsset
+from models.buckets_old import Bucket
 
 
 def main():

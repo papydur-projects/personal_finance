@@ -1,49 +1,39 @@
+from models.assets import Asset, CashAsset, CryptoAsset
 import pytest
-from models.assets import CashAsset, Asset, CryptoAsset
-from pydantic.dataclasses import dataclass
 from pydantic import ValidationError
 
 
-@dataclass
-class DummyAsset(Asset):
-    def get_total_value(self):
-        return self.quantity
-
-
 class TestAsset:
+    def test_asset_constructor(self):
+        assert Asset(name='test_asset', quantity=1000)
 
-    @pytest.mark.parametrize('name, quantity', [
-        ('dummy_asset', 1234),
-        ('091_02%', -230),
-        ('name', float(1234)),
-        ('name2', '1234')
-    ])
-    def test_asset_constructor_success(self, name, quantity):
-        assert DummyAsset(name=name, quantity=quantity)
-
-    def test_name_type_validation(self):
+    @pytest.mark.parametrize('name, quantity',
+                             [(123, 1000),
+                              (True, 1000),
+                              (9.12, 1000)]
+                             )
+    def test_name_string_only(self, name, quantity):
         with pytest.raises(ValidationError):
-            DummyAsset(135, 987)
-
-    def test_quantity_type_validation(self):
-        with pytest.raises(ValidationError):
-            DummyAsset('name', 'a_number')
+            Asset(name=name, quantity=quantity)
 
 
 class TestCashAsset:
+    def test_asset_type(self, cash: CashAsset) -> None:
+        assert cash.type == 'cash'
 
-    def test_cash_asset_constructor(self):
-        assert CashAsset(name='name', quantity=1000)
+    def test_negative_quantity(self) -> None:
+        assert CashAsset(name='debt', quantity=-1000)
 
-    def test_get_total_value(self):
-        assert CashAsset('pos_cash', 1000).get_total_value() == 1000
-        assert CashAsset('neg_cash', -89).get_total_value() == -89
+    def test_asset_type_immutable(self) -> None:
+        asset = CashAsset(name='cash', quantity=1000)
+        with pytest.raises(TypeError):
+            asset.type = 'other_type'
 
 
 class TestCryptoAsset:
+    def test_asset_type(self, bitcoin: CryptoAsset) -> None:
+        assert bitcoin.type == 'crypto'
 
-    def test_crypto_asset_constructor(self):
-        assert CryptoAsset('bitcoin', 1000, 'btc')
-
-
-
+    def test_asset_type_immutable(self, bitcoin: CryptoAsset) -> None:
+        with pytest.raises(TypeError):
+            bitcoin.type = 'other_type'

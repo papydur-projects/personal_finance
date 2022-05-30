@@ -1,41 +1,26 @@
-from abc import ABC, abstractmethod
-from pydantic.dataclasses import dataclass
-from pydantic import StrictStr
-from dataclasses import field
-from forex_python.converter import CurrencyRates
-from typing import List
-from pycoingecko import CoinGeckoAPI
+import abc
+
+from pydantic import BaseModel, StrictStr, Field
 
 
-@dataclass
-class Asset(ABC):
+class Asset(BaseModel, abc.ABC):
     name: StrictStr
     quantity: float
-    total_value: float = field(init=False)
-
-    def __post_init__(self):
-        self.total_value = self.get_total_value()
-
-    @abstractmethod
-    def get_total_value(self) -> float:
-        raise NotImplementedError
-
-    def get_dollar_value(self) -> float:
-        converter = CurrencyRates()
-        rate = converter.get_rate('EUR', 'USD')
-        return rate * self.total_value
+    type: str = Field(default=None)
 
 
-@dataclass
+class CashAsset(Asset):
+    type: str = Field('cash', allow_mutation=False)
+
+    class Config:
+        validate_assignment = True
+
+
 class CryptoAsset(Asset):
     ticker: StrictStr
+    type: str = Field('crypto', allow_mutation=False)
 
-    def get_total_value(self) -> float:
-        return self.quantity
+    class Config:
+        validate_assignment = True
 
 
-@dataclass
-class CashAsset(Asset):
-
-    def get_total_value(self) -> float:
-        return self.quantity
