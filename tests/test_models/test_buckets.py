@@ -58,6 +58,12 @@ class TestCashBucket:
         with pytest.raises(TypeError):
             empty_cash_bucket.validate_asset_type(bitcoin)
 
+    def test_get_total_value(self, empty_cash_bucket: CashBucket) -> None:
+        empty_cash_bucket.add_asset(CashAsset(name='cash', quantity=1000))
+        empty_cash_bucket.add_asset(CashAsset(name='debt', quantity=-200))
+        assert empty_cash_bucket.get_total_value() == 800
+
+
 
 
 

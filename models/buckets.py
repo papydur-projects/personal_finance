@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, Any, List
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -10,10 +10,10 @@ class Bucket(BaseModel, abc.ABC):
     assets: List[Asset] = Field(default_factory=list)
     type: str = 'base_asset'
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         return key in self.assets
 
-    def __getitem__(self, name):
+    def __getitem__(self, name) -> Asset:
         for asset in self.assets:
             if asset == name:
                 return asset
@@ -32,7 +32,7 @@ class Bucket(BaseModel, abc.ABC):
             raise(TypeError(f'Type of the asset [{asset.type}] does not match bucket type [{self.type}]'))
 
     @abc.abstractmethod
-    def get_total_value(self):
+    def get_total_value(self) -> float:
         raise NotImplementedError
 
 
@@ -43,4 +43,7 @@ class CashBucket(Bucket):
         validate_assignment = True
 
     def get_total_value(self):
-        pass
+        total = 0
+        for asset in self.assets:
+            total += asset.quantity
+        return total
