@@ -1,15 +1,16 @@
 from pycoingecko import CoinGeckoAPI
 
-from models.assets_old import CashAsset
-from models.buckets_old import Bucket
+from models.assets import CashAsset, Asset, CryptoAsset
+from models.buckets import Bucket
 
 
 def main():
-    class DummyBucket(Bucket):
-        def add_assets(self, assets):
-            self._add_assets(assets)
+    crypto = CryptoAsset(name='btc', quantity=1, ticker='btc')
+    c_list = [crypto]
 
-    DummyBucket().add_assets(CashAsset(name='cash', quantity=1234))
+
+    print(crypto in c_list)
+
 
 
 if __name__ == '__main__':

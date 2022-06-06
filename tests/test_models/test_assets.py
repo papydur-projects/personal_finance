@@ -24,6 +24,20 @@ class TestAsset:
         asset.add(-300.5)
         assert asset.quantity == 1199.5
 
+    def test_equal_to_asset_if_same_name(self) -> None:
+        asset1 = Asset(name='test', quantity=1000)
+        asset2 = Asset(name='test', quantity=500)
+        assert asset1 == asset2
+
+    def test_equal_to_string(self) -> None:
+        asset1 = Asset(name='test', quantity=1000)
+        assert asset1 == 'test'
+
+    def test_not_equal_if_different_types(self) -> None:
+        asset1 = CryptoAsset(name='test', quantity=1000, ticker='btc')
+        asset2 = CashAsset(name='test', quantity=500)
+        assert asset1 != asset2
+
 
 class TestCashAsset:
     def test_asset_type(self, cash: CashAsset) -> None:
@@ -37,9 +51,13 @@ class TestCashAsset:
         with pytest.raises(TypeError):
             asset.type = 'other_type'
 
+    def test_equal_to_string(self) -> None:
+        asset1 = CashAsset(name='cash', quantity=1000)
+        assert asset1 == 'cash'
+
 
 class TestCryptoAsset:
-    def test_asset_type(self, bitcoin: CryptoAsset) -> None:
+    def test_asset_type(self, bitcoin) -> None:
         assert bitcoin.type == 'crypto'
 
     def test_asset_type_immutable(self, bitcoin: CryptoAsset) -> None:

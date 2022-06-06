@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from pydantic import BaseModel, Field
 
@@ -7,12 +7,25 @@ from models.assets import Asset
 
 
 class Bucket(BaseModel, abc.ABC):
-    assets: Dict = Field(default_factory=dict)
+    assets: List[Asset] = Field(default_factory=list)
     type: str = 'base_asset'
+
+    def __contains__(self, key):
+        return key in self.assets
+
+    def __getitem__(self, name):
+        for asset in self.assets:
+            if asset == name:
+                return asset
+        else:
+            raise KeyError(f'[{name}] is not an asset in the bucket')
 
     def add_asset(self, asset: Asset) -> None:
         self.validate_asset_type(asset)
-        self.assets[asset.name] = asset
+        if asset in self:
+            self[asset.name].add(asset.quantity)
+        else:
+            self.assets.append(asset)
 
     def validate_asset_type(self, asset: Asset) -> None:
         if asset.type != self.type:

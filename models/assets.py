@@ -1,5 +1,5 @@
 import abc
-from typing import Union
+from typing import Union, ClassVar
 
 from pydantic import BaseModel, StrictStr, Field
 
@@ -11,6 +11,18 @@ class Asset(BaseModel, abc.ABC):
 
     def add(self, amount: Union[float, int]) -> None:
         self.quantity += amount
+
+    def __eq__(self, other):
+
+        if isinstance(other, str):
+            return self.name == other
+
+        if isinstance(other, type(self)):
+            return self.name == other.name
+
+        elif isinstance(other, Asset):
+            return False
+
 
 
 class CashAsset(Asset):
