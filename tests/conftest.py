@@ -2,6 +2,7 @@ import pytest
 
 from models.assets import CashAsset, CryptoAsset, EquityAsset, Asset
 from models.buckets import Bucket, CashBucket
+from models.records import Record
 
 
 class DummyBucket(Bucket):
@@ -37,3 +38,10 @@ def bitcoin() -> CryptoAsset:
 @pytest.fixture
 def nt_world() -> EquityAsset:
     return EquityAsset(name='nt_world', quantity=5, isin='NL0011225305')
+
+
+@pytest.fixture
+def empty_record() -> Record:
+    record = Record()
+    record.create_empty_dataframe()
+    return record

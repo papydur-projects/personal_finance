@@ -1,29 +1,45 @@
+import datetime
+
 import pandas as pd
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from models.buckets import Bucket
 
 
 class Record(BaseModel):
-    def __init__(self, type):
-        self.dataframe_path = Path(f'src/data/dataframes/{model_type}_df.pkl')
-        self.df = self.load_dataframe()
 
-    def create_dataframe(self):
-        column_names = ['date', 'total_value', 'bucket']
+    type: str = Field(default='base_record')
+    df: pd.DataFrame = None
 
-    def load_dataframe(self):
+    class Config:
+        arbitrary_types_allowed = True
+
+    @property
+    def dataframe_path(self) -> Path:
+        return Path(f'data/dataframes/{self.type}_df.pkl')
+
+    def create_empty_dataframe(self) -> None:
+        column_names = ['date', 'value', 'bucket']
+        self.df = pd.DataFrame(columns=column_names)
+        self.df.set_index('date', inplace=True)
+
+    def add(self, bucket: Bucket) -> None:
+        value = bucket.get_total_value()
+        self.df = self.df.append({'date': datetime.date.today(), 'value': value, 'bucket': bucket}, ignore_index=True)
+
+    def load_dataframe(self) -> None:
         if self.dataframe_path.is_file():
-            return pd.read_pickle(self.dataframe_path)
+            self.df = pd.read_pickle(self.dataframe_path)
         else:
-            self.create_dataframe()
+            self.create_empty_dataframe()
 
     def save_dataframe(self):
         self.df.to_pickle(self.dataframe_path)
 
 
 class CryptoRecord(Record):
-    def __init__(self):
-        super().__init__(model_type='crypto')
+    pass
 
 
 class StockRecord(Record):
@@ -31,4 +47,4 @@ class StockRecord(Record):
 
 
 class CashRecord(Record):
-    pass
+    type: str = 'cash'

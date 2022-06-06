@@ -1,4 +1,3 @@
-from typing import Any
 
 from models.assets import Asset, CashAsset, CryptoAsset, EquityAsset
 import pytest
