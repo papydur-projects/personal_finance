@@ -1,14 +1,15 @@
 import pandas as pd
 from pathlib import Path
+from pydantic import BaseModel
 
 
-class Record:
-    def __init__(self, model_type):
+class Record(BaseModel):
+    def __init__(self, type):
         self.dataframe_path = Path(f'src/data/dataframes/{model_type}_df.pkl')
         self.df = self.load_dataframe()
 
     def create_dataframe(self):
-        column_names = ['date', 'total_value', 'assets']
+        column_names = ['date', 'total_value', 'bucket']
 
     def load_dataframe(self):
         if self.dataframe_path.is_file():
