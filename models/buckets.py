@@ -20,6 +20,9 @@ class Bucket(BaseModel, abc.ABC):
         else:
             raise KeyError(f'[{name}] is not an asset in the bucket')
 
+    def __len__(self):
+        return len(self.assets)
+
     def add_asset(self, asset: Asset) -> None:
         self.validate_asset_type(asset)
         if asset in self:

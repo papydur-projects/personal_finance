@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from models.assets import CashAsset, CryptoAsset, EquityAsset, Asset
@@ -41,7 +43,12 @@ def nt_world() -> EquityAsset:
 
 
 @pytest.fixture
-def empty_record() -> Record:
+def cash_record() -> Record:
     record = Record()
-    record.create_empty_dataframe()
+    bucket = CashBucket()
+    asset = CashAsset(name='cash', quantity=1000)
+    asset2 = CashAsset(name='debt', quantity=-200)
+    bucket.add_asset(asset)
+    bucket.add_asset(asset2)
+    record.add(bucket, datetime.date.today()-datetime.timedelta(days=10))
     return record
