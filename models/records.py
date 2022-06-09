@@ -5,6 +5,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from models.buckets import Bucket
+from config import ROOT_DIR
 
 
 class Record(BaseModel):
@@ -20,34 +21,43 @@ class Record(BaseModel):
 
     @property
     def dataframe_path(self) -> Path:
-        return Path(f'data/dataframes/{self.type}_df.pkl')
+        return ROOT_DIR / Path(f'data/dataframes/{self.type}_df.pkl')
 
     def add(self, bucket: Bucket, date=datetime.date.today()) -> None:
+        self.validate_bucket_type(bucket)
         column_names = ['date', 'value', 'bucket']
         value = bucket.get_total_value()
-        new_row = pd.DataFrame({'date': date, 'value': value, 'bucket': [bucket.assets]},
-                               columns=column_names)
+        new_row = pd.DataFrame({'date': date, 'value': value, 'bucket': bucket}, columns=column_names)
         if self.df is not None:
             self.df = pd.concat([self.df, new_row])
         else:
             self.df = new_row
 
-    def load_dataframe(self) -> None:
-        if self.dataframe_path.is_file():
-            self.df = pd.read_pickle(self.dataframe_path)
-        else:
-            self.create_empty_dataframe()
+    def get_last_bucket(self):
+        if self.df is not None:
+            return self.df.iloc[-1]['bucket']
 
-    def save_dataframe(self):
-        self.df.to_pickle(self.dataframe_path)
+
+    def load_dataframe(self, path=None) -> None:
+        path = path if path else self.dataframe_path
+        self.df = pd.read_pickle(path)
+
+    def save_dataframe(self, path=None):
+        path = path if path else self.dataframe_path
+        self.df.to_pickle(path)
+
+    def validate_bucket_type(self, bucket: Bucket) -> None:
+        if bucket.type != self.type:
+            raise(TypeError(f'Type of the bucket [{bucket.type}] does not match record type [{self.type}]'))
+
 
 
 class CryptoRecord(Record):
-    pass
+    type: str = 'crypto'
 
 
 class StockRecord(Record):
-    pass
+    type: str = 'stock'
 
 
 class CashRecord(Record):

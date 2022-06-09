@@ -43,6 +43,7 @@ class TestBucket:
         empty_bucket.add_asset(asset)
         assert 'cash' in empty_bucket.assets
         assert 'cash' in empty_bucket
+        assert empty_bucket['cash'] == asset
 
     def test_bucket_contains_asset_with_asset(self, empty_bucket: Bucket):
         asset = Asset(name='cash', quantity=1000)

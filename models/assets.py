@@ -24,7 +24,6 @@ class Asset(BaseModel, abc.ABC):
             return False
 
 
-
 class CashAsset(Asset):
     type: str = Field('cash', allow_mutation=False)
 

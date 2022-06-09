@@ -1,6 +1,11 @@
+from pathlib import Path
+
+import pytest
+
 from models.assets import CashAsset
 from models.buckets import CashBucket
-from models.records import Record
+from models.records import Record, CashRecord
+from config import ROOT_DIR
 
 
 class TestRecord:
@@ -26,5 +31,49 @@ class TestRecord:
         bucket.add_asset(asset2)
         cash_record.add(bucket)
         assert len(cash_record) == 2
+
+    def test_dataframe_path(self):
+        record = Record()
+        assert record.dataframe_path == ROOT_DIR / 'data' / 'dataframes' / 'base_record_df.pkl'
+
+    def test_save_dataframe(self, cash_record: CashRecord, tmpdir: Path):
+        file_path = tmpdir / 'tmp.pkl'
+        cash_record.save_dataframe(path=file_path)
+        assert Path(file_path).is_file()
+
+    def test_save_dataframe_in_specified_dir(self, cash_record: CashRecord):
+        cash_record.save_dataframe()
+        assert cash_record.dataframe_path.is_file()
+
+    def test_load_dataframe(self, cash_record: CashRecord, tmpdir: Path):
+        file_path = tmpdir / 'tmp.pkl'
+        cash_record.save_dataframe(path=file_path)
+        assert cash_record.df.iloc[0]['value'] == 800
+        assert len(cash_record) == 1
+        cash_record.df = None
+        with pytest.raises(AttributeError):
+            cash_record.df.iloc[0]['value']
+        cash_record.load_dataframe(path=file_path)
+        assert cash_record.df.iloc[0]['value'] == 800
+        assert len(cash_record) == 1
+
+    def test_get_last_bucket(self, big_cash_record: CashRecord):
+        bucket = big_cash_record.get_last_bucket()
+
+        #assert bucket['cash'] == 1800
+        #assert bucket['debt'] == -200
+
+
+class TestCashRecord:
+
+    def test_constructor(self):
+        assert CashRecord().type == 'cash'
+
+    def test_dataframe_path(self):
+        assert CashRecord().dataframe_path == ROOT_DIR / 'data' / 'dataframes' / 'cash_df.pkl'
+
+
+
+
 
 
