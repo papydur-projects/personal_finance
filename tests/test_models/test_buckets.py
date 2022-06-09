@@ -5,8 +5,13 @@ from models.buckets import CashBucket, Bucket
 
 
 class TestBucket:
+
     def test_bucket_constructor(self, empty_bucket: Bucket) -> None:
-        assert empty_bucket
+        assert len(empty_bucket) == 0
+
+    def test_get_total_value_not_implemented(self, empty_bucket) -> None:
+        with pytest.raises(NotImplementedError):
+            empty_bucket.get_total_value()
 
     def test_empty_bucket(self, empty_bucket: Bucket) -> None:
         assert not empty_bucket.assets

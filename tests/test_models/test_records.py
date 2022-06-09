@@ -1,14 +1,11 @@
-import pytest
-
-from models.assets import Asset, CashAsset
+from models.assets import CashAsset
 from models.buckets import CashBucket
 from models.records import Record
-import datetime
 
 
 class TestRecord:
     def test_constructor(self) -> None:
-        assert Record()
+        assert Record().type == 'base_record'
 
     def test_add_bucket_to_empty_record(self) -> None:
         record = Record()

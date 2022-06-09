@@ -9,7 +9,7 @@ from models.records import Record
 
 class DummyBucket(Bucket):
     def get_total_value(self) -> None:
-        return None
+        super().get_total_value()
 
 
 @pytest.fixture
