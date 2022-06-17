@@ -3,7 +3,7 @@ from dash import html, dcc
 import plotly.express as px
 
 fake_x = ['stocks', 'crypto', 'illiquid_assets']
-fake_y = [2000, 3000, 10000]
+fake_y = [2000, 3000, 12000]
 
 
 def create_net_worth_graph():
